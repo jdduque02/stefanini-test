@@ -1,5 +1,6 @@
 import { ApiProperty} from '@nestjs/swagger'
 import { IsString, IsNotEmpty, MinLength, MaxLength, IsIn } from 'class-validator';
+
 export class CreateCompanyDto {
     @ApiProperty({ 
         example: 'Empresa XYZ',
