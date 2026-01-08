@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Body, Version } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
-import { CreateCompanyDto } from '../domain/interfaces/create-company.dto';
+import { CompanyDto } from '../interfaces/create-company.dto';
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
   @Version('1')
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companyService.create(createCompanyDto);
+  create(@Body() CompanyDto: CompanyDto) {
+    return this.companyService.create(CompanyDto);
   }
   @Version('1')
   @Get()

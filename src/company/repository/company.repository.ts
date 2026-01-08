@@ -2,13 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
-import { CompanyRepositoryPort } from '../domain/interfaces/company-repository.port';
-import { Company } from '../domain/entities/company.entity';
-import { CreateCompanyDto } from '../domain/interfaces/create-company.dto';
-
+import { Company } from '../entities/company.entity';
+import { CompanyDto } from '../interfaces/create-company.dto';
 
 @Injectable()
-export class JsonCompanyRepository implements CompanyRepositoryPort {
+export class JsonCompanyRepository {
   private readonly filePath: string;
 
   constructor() {
@@ -40,30 +38,30 @@ export class JsonCompanyRepository implements CompanyRepositoryPort {
     return await this.readFile();
   }
 
-  async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+  async create(companyDto: CompanyDto): Promise<Company> {
     try {
-        const companies = await this.readFile();
+      const companies = await this.readFile();
 
-        const existingCompany = companies.find(
-        ({ cuit }) => cuit === createCompanyDto.cuit,
+      const existingCompany = companies.find(
+        ({ company_cuit }) => company_cuit === companyDto.company_cuit,
+      );
+      if (existingCompany) {
+        throw new Error(
+          `Ya existe una empresa con el CUIT ${companyDto.company_cuit}`,
         );
-        if (existingCompany) {
-            throw new Error(
-                `Ya existe una empresa con el CUIT ${createCompanyDto.cuit}`,
-            );
-        }
-        const newCompany: Company = {
+      }
+      const newCompany: Company = {
         id: uuidv4(),
-        ...createCompanyDto,
-        };
+        ...companyDto,
+      };
 
-        companies.push(newCompany);
-        await this.writeFile(companies);
+      companies.push(newCompany);
+      await this.writeFile(companies);
 
-        return newCompany;
+      return newCompany;
     } catch (error) {
-        Logger.error('Error al crear la empresa:', error.message);
-        throw new Error('Error al crear la empresa');
+      Logger.error('Error al crear la empresa:', error.message);
+      throw new Error('Error al crear la empresa');
     }
   }
 }
