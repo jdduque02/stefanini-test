@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCompanyDto } from '../dto/create-company.dto';
-import { UpdateCompanyDto } from '../dto/update-company.dto';
+import { CreateCompanyDto } from '../domain/interfaces/create-company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -10,17 +9,5 @@ export class CompanyService {
 
   findAll() {
     return `This action returns all company`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
-  }
-
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} company`;
   }
 }
