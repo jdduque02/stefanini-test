@@ -1,10 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
+import { CompanyService } from './services/company.service';
+import { CompanyController } from './controllers/company.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import {ThrottlerModule, ThrottlerModuleOptions} from '@nestjs/throttler';
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+    }),
+    ThrottlerModule.forRootAsync({
+      useFactory: async (configService: ConfigService): Promise<ThrottlerModuleOptions> => ({
+        throttlers: [
+          {
+            ttl: Number(configService.get('RATE_LIMIT_TTL', 60)),
+            limit: Number(configService.get('RATE_LIMIT_MAX', 100)),
+          }
+        ]
+      }),
+    }),
+  ],
+  controllers: [CompanyController],
+  providers: [CompanyService],
 })
 export class AppModule {}
