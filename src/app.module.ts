@@ -10,6 +10,8 @@ import {ThrottlerModule, ThrottlerModuleOptions} from '@nestjs/throttler';
       cache: true,
     }),
     ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService): Promise<ThrottlerModuleOptions> => ({
         throttlers: [
           {
