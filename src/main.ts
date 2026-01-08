@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
-import { AppModule } from './app.module';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -43,4 +43,4 @@ async function bootstrap() {
     `Swagger is running on: localhost:${APP_PORT}/api/docs/v${VERSION}`,
   );
 }
-void bootstrap();
+bootstrap();
