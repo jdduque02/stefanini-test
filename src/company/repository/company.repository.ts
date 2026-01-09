@@ -3,14 +3,26 @@ import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 import { Company } from '../entities/company.entity';
+import { CompanyPyme } from '../entities/company-pyme.entity';
+import { CompanyCorporate } from '../entities/company-corporate.entity';
 import { CompanyDto } from '../interfaces/create-company.dto';
+import { CompanyPymeDto } from '../interfaces/create-company-pyme.dto';
+import { CompanyCorporateDto } from '../interfaces/create-company-corporate.dto';
 
 @Injectable()
 export class JsonCompanyRepository {
   private readonly filePath: string;
 
   constructor() {
-    this.filePath = join(__dirname, '..', 'db', 'company.json');
+    this.filePath = join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'src',
+      'db',
+      'company.json',
+    );
   }
 
   private async readFile(): Promise<Company[]> {
@@ -38,7 +50,9 @@ export class JsonCompanyRepository {
     return await this.readFile();
   }
 
-  async create(companyDto: CompanyDto): Promise<Company> {
+  async create(
+    companyDto: CompanyDto | CompanyPymeDto | CompanyCorporateDto,
+  ): Promise<Company> {
     try {
       const companies = await this.readFile();
 
@@ -50,10 +64,36 @@ export class JsonCompanyRepository {
           `Ya existe una empresa con el CUIT ${companyDto.company_cuit}`,
         );
       }
-      const newCompany: Company = {
-        id: uuidv4(),
-        ...companyDto,
-      };
+
+      let newCompany: Company | CompanyPyme | CompanyCorporate;
+
+      // Identificar el tipo de empresa y crear la instancia correspondiente
+      if (companyDto.company_type === 'PyME') {
+        const pymeDto = companyDto as CompanyPymeDto;
+        newCompany = {
+          id: uuidv4(),
+          ...pymeDto,
+          company_require_manual_approval:
+            pymeDto.company_require_manual_approval ?? false,
+          company_category_pyme: pymeDto.company_category_pyme ?? 'Pequeña',
+        } as CompanyPyme;
+      } else if (companyDto.company_type === 'Corporativa') {
+        const corporateDto = companyDto as CompanyCorporateDto;
+        newCompany = {
+          id: uuidv4(),
+          ...corporateDto,
+          company_resolution_time:
+            corporateDto.company_resolution_time ?? new Date(),
+          company_proxies: corporateDto.company_proxies ?? [],
+          company_shareholders: corporateDto.company_shareholders ?? [],
+        } as CompanyCorporate;
+      } else {
+        // Empresa genérica si el tipo no coincide
+        newCompany = {
+          id: uuidv4(),
+          ...companyDto,
+        } as Company;
+      }
 
       companies.push(newCompany);
       await this.writeFile(companies);

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "518f590c-d5e6-4ef1-aa0d-207c6baffe03",
+    "transfer_company_id": "123e4567-e89b-12d3-a456-426614174000",
+    "transfer_amount": 50000.5,
+    "transfer_date": "2026-01-09T00:01:29.674Z",
+    "transfer_status": "Pendiente",
+    "transfer_type": "Débito",
+    "transfer_description": "Pago a proveedor XYZ",
+    "transfer_create_at": "2026-01-09T00:08:17.188Z",
+    "transfer_update_at": "2026-01-09T00:08:17.188Z",
+    "transfer_is_active": true
+  }
+]

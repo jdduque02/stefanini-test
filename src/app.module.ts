@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CompanyService } from './company/services/company.service';
-import { CompanyController } from './company/controllers/company.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { CompanyModule } from './company/company.module';
-import {TransferModule} from './transfer/transfer.module';
-import { TransferController } from './transfer/controllers/transfer.controller';
-import { TransferService } from './transfer/services/transfer.service';
+import { TransferModule } from './transfer/transfer.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,7 +27,5 @@ import { TransferService } from './transfer/services/transfer.service';
     CompanyModule,
     TransferModule,
   ],
-  controllers: [CompanyController, TransferController],
-  providers: [CompanyService, TransferService],
 })
 export class AppModule {}

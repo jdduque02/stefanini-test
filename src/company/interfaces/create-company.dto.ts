@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -6,6 +6,7 @@ import {
   MaxLength,
   IsIn,
   IsOptional,
+  IsInt,
 } from 'class-validator';
 export class CompanyDto {
   @ApiProperty({
@@ -64,12 +65,36 @@ export class CompanyDto {
     message: 'La dirección de la empresa no puede tener más de 255 caracteres',
   })
   company_address: string;
-
   @ApiProperty({
-    description: 'Datos específicos según el tipo de empresa (opcional)',
-    required: false,
-    type: Object,
+    example: 1,
+    description: 'Número de empleados de la empresa',
+    minLength: 1,
   })
   @IsOptional()
-  company_meta?: Record<string, any>;
+  @IsInt({ message: 'El número de empleados debe ser un número entero' })
+  @MinLength(1, {
+    message: 'El número de empleados debe tener al menos 1 empleado',
+  })
+  company_number_employees?: number;
+
+  @ApiPropertyOptional({
+    example: new Date(),
+    description: 'Fecha de creación de la empresa',
+  })
+  @IsOptional()
+  company_create_at?: Date = new Date();
+  
+  @ApiPropertyOptional({
+    example: new Date(),
+    description: 'Fecha de actualización de la empresa',
+  })
+  @IsOptional()
+  company_update_at?: Date = new Date();
+  
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Estado de la empresa',
+  })
+  @IsOptional()
+  company_is_active?: boolean = true;
 }

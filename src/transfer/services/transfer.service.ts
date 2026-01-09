@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTransferDto } from '../interfaces/create-transfer.dto';
+import { ResponseTransferDto } from '../interfaces/response-transfer.dto';
+import { JsonTransferRepository } from '../repository/transfer.repository';
 
 @Injectable()
 export class TransferService {
-  create(createTransferDto: CreateTransferDto) {
-    return 'This action adds a new transfer';
+  constructor(private readonly transferRepository: JsonTransferRepository) {}
+
+  async create(
+    createTransferDto: CreateTransferDto,
+  ): Promise<ResponseTransferDto> {
+    return await this.transferRepository.create(createTransferDto);
   }
 
-  findAll() {
-    return `This action returns all transfer`;
+  async findAll(): Promise<ResponseTransferDto[]> {
+    return await this.transferRepository.findAll();
   }
-
 }
