@@ -107,14 +107,6 @@ npm run build
 npm run start:prod
 ```
 
-### Modo Debug
-
-Para ejecutar con el debugger de Node.js:
-
-```bash
-npm run start:debug
-```
-
 Luego puedes conectar tu IDE al debugger en el puerto 9229.
 
 Una vez iniciado, el servidor estará disponible en: **http://localhost:3000**
@@ -354,12 +346,6 @@ curl -X GET "http://localhost:3000/api/v1/company?page=1&limit=10"
 
 El proyecto incluye tests unitarios completos.
 
-### Ejecutar todos los tests
-
-```bash
-npm run test
-```
-
 ### Ejecutar tests con cobertura
 
 ```bash
@@ -374,91 +360,325 @@ Esto generará un reporte de cobertura en la carpeta `coverage/`. Puedes ver el 
 npm run test:watch
 ```
 
-## 🎯 Decisiones Técnicas
+## 🎯 Decisiones Técnicas y Arquitectura
+
+### Punto de Partida: Template Consolidado
+
+Este proyecto partió de una estructura base consolidada a través de cursos previos y experiencia práctica en desarrollo de APIs empresariales. Este template me permitió arrancar con:
+
+- **Configuración de seguridad preestablecida**: CORS, Helmet, y protecciones base
+- **Patrones de diseño probados**: Estructura modular, separación de responsabilidades
+- **Herramientas de calidad**: ESLint, Prettier, Jest configurados
+- **Best practices incorporadas**: Validaciones, manejo de errores, logging
+
+Esto me permitió concentrarme en la lógica de negocio específica del dominio (empresas y transferencias) en lugar de configurar infraestructura básica desde cero.
 
 ### ¿Por qué NestJS?
 
-Elegí NestJS porque es un framework moderno y robusto que:
+Elegí NestJS como framework porque ofrece:
 
-- **Proporciona estructura clara**: La arquitectura modular de NestJS hace que el código sea fácil de organizar y mantener
-- **TypeScript nativo**: Ofrece type-safety y mejor experiencia de desarrollo con autocompletado
-- **Inyección de dependencias**: Facilita el testing y hace el código más testeable y desacoplado
-- **Decoradores potentes**: Simplifican la validación, documentación y configuración
-- **Ecosistema maduro**: Gran comunidad y excelente documentación
+- **Arquitectura empresarial out-of-the-box**: Módulos, servicios, controladores bien definidos
+- **TypeScript nativo**: Type-safety que previene errores en desarrollo y facilita refactoring
+- **Decoradores potentes**: Simplifican validación, documentación, inyección de dependencias
+- **Ecosistema maduro**: Integraciones con Swagger, testing, validación, etc.
+- **Escalabilidad probada**: Usado en producción por empresas de todo tamaño
 
-### Arquitectura Modular
+### Arquitectura Modular con Clean Code
 
-Opté por una **arquitectura modular** en lugar de hexagonal porque:
-
-1. **Simplicidad apropiada**: Para este proyecto, la complejidad de una arquitectura hexagonal completa sería excesiva
-2. **Separación de responsabilidades clara**: Los módulos `company` y `transfer` están completamente aislados
-3. **Escalabilidad**: Es fácil agregar nuevos módulos sin afectar los existentes
-4. **Mantenibilidad**: La estructura es intuitiva y fácil de navegar para cualquier desarrollador
+Implementé una **arquitectura modular** siguiendo principios de **Clean Code** y **DRY** (Don't Repeat Yourself):
 
 **Estructura de cada módulo:**
 
 ```
 module/
-├── controllers/     # Manejo de peticiones HTTP
+├── controllers/     # Capa de presentación (HTTP)
 ├── services/        # Lógica de negocio
-├── repository/      # Acceso a datos
+├── repository/      # Capa de acceso a datos
 ├── interfaces/      # DTOs y contratos
 └── entities/        # Modelos de dominio
 ```
 
-### Persistencia en JSON
+**¿Por qué modular y no hexagonal?**
 
-Usé archivos JSON en lugar de una base de datos tradicional por:
+Aunque la arquitectura hexagonal es poderosa, para este alcance opté por modular porque:
 
-- **Simplicidad de setup**: No requiere instalación de bases de datos
-- **Portabilidad**: El proyecto funciona inmediatamente en cualquier entorno
-- **Suficiente para el alcance**: Para un proyecto de prueba técnica es apropiado
-- **Fácil de reemplazar**: La capa de repositorio permite cambiar a una BD real sin modificar la lógica
+1. **Pragmatismo**: La complejidad de hexagonal no se justifica para un proyecto de este tamaño
+2. **Claridad**: Más desarrolladores están familiarizados con módulos que con puertos/adaptadores
+3. **Suficientemente desacoplado**: Los repositorios actúan como adaptadores, manteniendo la lógica separada de la persistencia
+4. **Facilidad de testing**: La inyección de dependencias permite mockear fácilmente cada capa
 
-**Nota**: En producción recomendaría usar PostgreSQL con TypeORM o Prisma.
+**Aplicación de Clean Code:**
 
-### Validación con Class-Validator
+- **Nombres descriptivos**: `JsonCompanyRepository`, `CreateTransferDto`
+- **Funciones pequeñas y enfocadas**: Cada método hace una cosa bien
+- **Sin repetición**: Reutilización de validadores y transformadores
+- **Separación de responsabilidades**: Cada clase tiene un propósito único
+- **Código autodocumentado**: Los tipos y nombres explican la intención
 
-Implementé validaciones exhaustivas porque:
+### Seguridad en Múltiples Capas
 
-- **Evita datos corruptos**: Valida antes de procesar cualquier información
-- **Mejora la experiencia**: Devuelve mensajes claros sobre qué está mal
-- **Reduce bugs**: Previene errores en tiempo de ejecución
-- **Documentación automática**: Los decoradores también documentan en Swagger
+Implementé un enfoque de **defensa en profundidad**:
 
-### Versionamiento de API
+#### 1. CORS Configurado
 
-Incluí versionamiento (`/api/v1/...`) aunque es la primera versión porque:
+```typescript
+// Previene accesos no autorizados desde dominios externos
+app.enableCors({
+  origin: process.env.ALLOWED_ORIGINS,
+  credentials: true,
+});
+```
 
-- **Preparado para el futuro**: Facilita mantener retrocompatibilidad
-- **Buena práctica**: Es un estándar en APIs profesionales
-- **Migración sin romper clientes**: Permite evolucionar la API sin afectar usuarios
+#### 2. Rate Limiting (Anti-DDoS)
 
-### Rate Limiting y Seguridad
+```typescript
+// Throttler: 10 peticiones por 60 segundos por IP
+// Previene ataques de denegación de servicio
+```
 
-Implementé Helmet y Throttler para:
+- Protege contra bots y scrapers abusivos
+- Mantiene la API disponible bajo carga
 
-- **Prevenir ataques DDoS**: Limita peticiones por IP
-- **Headers de seguridad**: Helmet configura headers HTTP seguros
-- **Protección básica**: Primera línea de defensa contra vulnerabilidades comunes
+#### 3. Helmet para Headers Seguros
 
-### Testing Completo
+- **XSS Protection**: Previene inyección de scripts maliciosos
+- **Content Security Policy**: Controla qué recursos puede cargar el navegador
+- **HSTS**: Fuerza conexiones HTTPS
+- **X-Frame-Options**: Previene clickjacking
 
-Escribí tests exhaustivos porque:
+#### 4. Prevención de Inyección SQL
 
-- **Confianza en refactors**: Puedo modificar código sin miedo a romper funcionalidad
-- **Documentación viva**: Los tests muestran cómo usar el código
-- **Calidad asegurada**: Detecta bugs antes de que lleguen a producción
-- **Mantenibilidad**: Facilita agregar features sabiendo que lo existente funciona
+Aunque uso JSON, la arquitectura está preparada para BD relacionales:
 
-### Separación de DTOs
+- **Uso de ORMs/Query Builders**: TypeORM, Prisma sanitizan automáticamente
+- **Validación estricta de inputs**: Class-validator rechaza datos malformados
+- **Separación de capas**: Los repositorios encapsulan el acceso a datos
 
-Creé DTOs específicos para entrada y salida porque:
+### Validación Exhaustiva de Datos
 
-- **Seguridad**: No expongo propiedades internas
-- **Flexibilidad**: Puedo transformar datos sin cambiar las entidades
-- **Validación específica**: Diferentes reglas para crear vs. consultar
-- **Documentación clara**: Swagger muestra exactamente qué esperar
+Implementé **validación en dos niveles**:
+
+#### Nivel 1: DTOs de Entrada
+
+```typescript
+@IsNotEmpty()
+@IsString()
+@MinLength(11)
+@MaxLength(11)
+company_cuit: string;
+```
+
+Ventajas:
+
+- **Prevención temprana**: Falla rápido con errores descriptivos
+- **Autodocumentación**: Los decoradores describen las reglas
+- **Swagger automático**: La documentación se genera de las validaciones
+
+#### Nivel 2: Validaciones de Negocio
+
+```typescript
+// En el servicio/repositorio
+if (await this.existsByCuit(cuit)) {
+  throw new ConflictException('Ya existe una empresa con ese CUIT');
+}
+```
+
+Ventajas:
+
+- **Integridad de datos**: Previene duplicados y estados inválidos
+- **Lógica centralizada**: Las reglas viven en un solo lugar
+- **Mensajes claros**: El usuario sabe exactamente qué corregir
+
+### Documentación Interactiva Completa
+
+Integré **Swagger/OpenAPI** con documentación exhaustiva:
+
+**DTOs de Entrada documentados:**
+
+```typescript
+@ApiProperty({
+  example: 'Empresa XYZ',
+  description: 'Nombre de la empresa',
+  minLength: 3,
+  maxLength: 100,
+})
+```
+
+**DTOs de Respuesta documentados:**
+
+```typescript
+@ApiResponse({
+  status: 201,
+  description: 'Empresa creada exitosamente',
+  type: ResponseCompanyDto,
+})
+```
+
+**Múltiples escenarios de respuesta:**
+
+- Success (200, 201)
+- Client errors (400, 404, 409)
+- Server errors (500)
+
+Esto permite:
+
+- **Testing sin código**: Desarrolladores frontend pueden probar endpoints
+- **Contrato claro**: Se documenta qué esperar en cada caso
+- **Generación de clientes**: Se puede generar código cliente automáticamente
+
+### Versionamiento de API y Documentación
+
+Implementé versionamiento desde el inicio (`/api/v1/...`) porque:
+
+**Ventajas inmediatas:**
+
+- **Preparado para evolución**: Nuevas versiones no rompen clientes existentes
+- **Estándar profesional**: Es una práctica esperada en APIs empresariales
+- **Separación de documentación**: Cada versión tiene su propia documentación
+
+**Cómo funciona:**
+
+```typescript
+@Version('1')
+@Post()
+create(@Body() dto: CreateDto) { ... }
+```
+
+Esto permite en el futuro tener `/api/v2/company` con cambios mientras `/api/v1/company` sigue funcionando.
+
+### Persistencia en JSON: Decisión Pragmática
+
+Usé archivos JSON en lugar de una base de datos tradicional:
+
+**Ventajas para este proyecto:**
+
+- ✅ **Zero setup**: No requiere instalación de PostgreSQL/MySQL
+- ✅ **Portabilidad**: Funciona en cualquier entorno sin configuración
+- ✅ **Debugging simple**: Los datos son legibles directamente
+- ✅ **Apropiado para demos**: Suficiente para pruebas técnicas
+
+**Preparado para migración:**
+
+- La capa de repositorio encapsula todo el acceso a datos
+- Cambiar a PostgreSQL solo requiere:
+  1. Implementar nuevo repositorio con TypeORM
+  2. Registrar en el módulo
+  3. Cero cambios en servicios o controladores
+
+**En producción usaría:**
+
+- **PostgreSQL** con TypeORM o Prisma
+- **Transacciones** para operaciones críticas
+- **Índices** en campos de búsqueda (CUIT, nombre)
+- **Migraciones** versionadas
+
+### Nomenclatura y Buenas Prácticas en Entidades
+
+Apliqué **convenciones de bases de datos profesionales**:
+
+#### Nomenclatura Consistente
+
+```typescript
+// Prefijo del módulo + descripción
+company_name;
+company_cuit;
+transfer_amount;
+transfer_date;
+```
+
+Ventajas:
+
+- **Evita colisiones**: No hay ambigüedad entre `name` de empresa vs transferencia
+- **Mapeo directo a BD**: Los nombres funcionan bien en tablas SQL
+- **Autocomplete útil**: IDE agrupa campos relacionados
+
+#### Campos de Auditoría
+
+Cada entidad incluye:
+
+```typescript
+id: string                    // UUID único
+company_create_at: Date       // Timestamp de creación
+company_updated_at?: Date     // Timestamp de modificación
+company_is_active?: boolean   // Soft delete
+```
+
+Esto permite:
+
+- **Trazabilidad**: Saber cuándo se creó/modificó cada registro
+- **Soft deletes**: Marcar como inactivo en lugar de borrar
+- **Auditoría**: Cumplir con requisitos regulatorios
+- **Debugging**: Rastrear problemas temporales
+
+### Testing Unitario Completo
+
+Implementé tests exhaustivos para cada capa:
+
+**Cobertura:**
+
+- ✅ Controladores: Validación de endpoints
+- ✅ Servicios: Lógica de negocio
+- ✅ Repositorios: Operaciones de datos
+
+**Estrategia de testing:**
+
+```typescript
+// Mock de dependencias
+const mockRepository = {
+  create: jest.fn(),
+  findAll: jest.fn(),
+};
+
+// Test aislado
+it('should create a company', async () => {
+  mockRepository.create.mockResolvedValue(expected);
+  const result = await service.create(dto);
+  expect(result).toEqual(expected);
+});
+```
+
+**Beneficios obtenidos:**
+
+- **Confianza en refactors**: Puedo mejorar código sin miedo
+- **Documentación ejecutable**: Los tests muestran casos de uso reales
+- **Detección temprana**: Bugs encontrados antes de deployment
+- **Desarrollo más rápido**: Test-driven development acelera iteraciones
+
+### Separación de DTOs: Entrada vs Salida
+
+Implementé DTOs específicos para cada flujo:
+
+**DTOs de Entrada (`CreateCompanyDto`):**
+
+- Solo campos que el cliente puede/debe enviar
+- Validaciones estrictas
+- No incluye campos autogenerados (id, timestamps)
+
+**DTOs de Salida (`ResponseCompanyDto`):**
+
+- Incluye campos calculados/autogenerados
+- Puede omitir información sensible
+- Agrega campos enriquecidos (como `transfers`)
+
+**Ventajas:**
+
+- **Seguridad**: El cliente no puede manipular `id` o `created_at`
+- **Flexibilidad**: Puedo transformar datos sin cambiar la entidad
+- **Contratos claros**: Swagger muestra exactamente qué esperar
+- **Evolución independiente**: Puedo cambiar la respuesta sin afectar el input
+
+### Conclusión
+
+La combinación de un template probado, arquitectura modular con Clean Code, seguridad en capas, validación exhaustiva, documentación completa y testing riguroso resulta en una API:
+
+- ✅ **Segura**: Protegida contra vulnerabilidades comunes
+- ✅ **Mantenible**: Código limpio y bien organizado
+- ✅ **Documentada**: Swagger interactivo y README completo
+- ✅ **Confiable**: Tests garantizan funcionamiento correcto
+- ✅ **Escalable**: Fácil agregar nuevos módulos
+- ✅ **Profesional**: Cumple estándares de la industria
+
+Este enfoque equilibra pragmatismo (JSON en lugar de BD completa) con profesionalismo (seguridad, testing, documentación), demostrando capacidad de tomar decisiones técnicas apropiadas al contexto.
 
 ## 📚 Referencias
 
@@ -467,8 +687,3 @@ Creé DTOs específicos para entrada y salida porque:
 - [Class Validator](https://github.com/typestack/class-validator)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 
----
-
-**Autor**: Desarrollado como parte de una prueba técnica para Stefanini  
-**Licencia**: UNLICENSED (Privado)  
-**Versión**: 0.0.1
