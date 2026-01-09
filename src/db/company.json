@@ -1,0 +1,167 @@
+[
+  {
+    "id": "88dc717d-f066-4f60-bad0-155b0a16e3b5",
+    "company_name": "Empresa XYZ",
+    "company_cuit": "12345678901234",
+    "company_type": "PyME",
+    "company_address": "12345678901234",
+    "company_number_employees": 1,
+    "company_require_manual_approval": false,
+    "company_category_pyme": "Micro",
+    "company_create_at": "2025-06-15T10:30:00.000Z",
+    "company_update_at": "2025-06-15T10:30:00.000Z",
+    "company_is_active": true
+  },
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "company_name": "Tech Solutions SA",
+    "company_cuit": "20304050607",
+    "company_type": "Corporativa",
+    "company_address": "Av. Corrientes 1234, CABA",
+    "company_number_employees": 250,
+    "company_resolution_time": "2024-03-20T14:00:00.000Z",
+    "company_proxies": [
+      {
+        "proxy_name": "Juan Pérez",
+        "proxy_cuit": "20123456789",
+        "proxy_address": "Calle Falsa 123"
+      },
+      {
+        "proxy_name": "María García",
+        "proxy_cuit": "27234567890",
+        "proxy_address": "Av. Libertador 456"
+      }
+    ],
+    "company_shareholders": [
+      {
+        "shareholder_name": "Carlos Rodriguez",
+        "shareholder_cuit": "23345678901",
+        "shareholder_percentage": 60.5
+      },
+      {
+        "shareholder_name": "Ana Martinez",
+        "shareholder_cuit": "27456789012",
+        "shareholder_percentage": 39.5
+      }
+    ],
+    "company_create_at": "2024-03-20T08:00:00.000Z",
+    "company_update_at": "2025-12-10T16:45:00.000Z",
+    "company_is_active": true
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "company_name": "Comercial del Sur",
+    "company_cuit": "30456789012",
+    "company_type": "PyME",
+    "company_address": "San Martin 567, Rosario",
+    "company_number_employees": 45,
+    "company_require_manual_approval": true,
+    "company_category_pyme": "Pequeña",
+    "company_create_at": "2023-01-10T09:00:00.000Z",
+    "company_update_at": "2025-11-05T11:20:00.000Z",
+    "company_is_active": true
+  },
+  {
+    "id": "9f8e7d6c-5b4a-3210-fedc-ba9876543210",
+    "company_name": "Industrias Argentinas Corp",
+    "company_cuit": "33567890123",
+    "company_type": "Corporativa",
+    "company_address": "Parque Industrial Zona Norte, Lote 45",
+    "company_number_employees": 500,
+    "company_resolution_time": "2022-08-15T10:00:00.000Z",
+    "company_proxies": [
+      {
+        "proxy_name": "Roberto Sánchez",
+        "proxy_cuit": "20567890123",
+        "proxy_address": "Belgrano 890"
+      }
+    ],
+    "company_shareholders": [
+      {
+        "shareholder_name": "Inversiones SA",
+        "shareholder_cuit": "30678901234",
+        "shareholder_percentage": 75.0
+      },
+      {
+        "shareholder_name": "Grupo Inversor del Plata",
+        "shareholder_cuit": "30789012345",
+        "shareholder_percentage": 25.0
+      }
+    ],
+    "company_create_at": "2022-08-15T08:30:00.000Z",
+    "company_update_at": "2025-12-20T14:15:00.000Z",
+    "company_is_active": true
+  },
+  {
+    "id": "f1e2d3c4-b5a6-9876-5432-1098fedcba98",
+    "company_name": "MicroEmpresas Digital",
+    "company_cuit": "27890123456",
+    "company_type": "PyME",
+    "company_address": "Tucumán 234, Córdoba Capital",
+    "company_number_employees": 8,
+    "company_require_manual_approval": false,
+    "company_category_pyme": "Micro",
+    "company_create_at": "2024-09-01T12:00:00.000Z",
+    "company_update_at": "2025-10-18T09:30:00.000Z",
+    "company_is_active": true
+  },
+  {
+    "id": "abcd1234-5678-90ef-ghij-klmn56789012",
+    "company_name": "Servicios Integrados del Norte",
+    "company_cuit": "20901234567",
+    "company_type": "PyME",
+    "company_address": "Sarmiento 789, Salta",
+    "company_number_employees": 120,
+    "company_require_manual_approval": true,
+    "company_category_pyme": "Mediana",
+    "company_create_at": "2021-05-12T07:00:00.000Z",
+    "company_update_at": "2025-12-28T15:00:00.000Z",
+    "company_is_active": true
+  },
+  {
+    "id": "fedcba98-7654-3210-fedc-1234567890ab",
+    "company_name": "Exportadora Pampa SA",
+    "company_cuit": "30012345678",
+    "company_type": "Corporativa",
+    "company_address": "Ruta Nacional 9 Km 456, Buenos Aires",
+    "company_number_employees": 350,
+    "company_resolution_time": "2023-11-10T09:00:00.000Z",
+    "company_proxies": [
+      {
+        "proxy_name": "Laura Fernández",
+        "proxy_cuit": "27123456789",
+        "proxy_address": "Mitre 567"
+      },
+      {
+        "proxy_name": "Diego Morales",
+        "proxy_cuit": "20234567890",
+        "proxy_address": "Rivadavia 123"
+      },
+      {
+        "proxy_name": "Silvia Castro",
+        "proxy_cuit": "27345678901",
+        "proxy_address": "9 de Julio 890"
+      }
+    ],
+    "company_shareholders": [
+      {
+        "shareholder_name": "Holdings Internacional",
+        "shareholder_cuit": "30456789012",
+        "shareholder_percentage": 45.0
+      },
+      {
+        "shareholder_name": "Fondo de Inversión Alpha",
+        "shareholder_cuit": "30567890123",
+        "shareholder_percentage": 35.0
+      },
+      {
+        "shareholder_name": "Pedro Gonzalez",
+        "shareholder_cuit": "20678901234",
+        "shareholder_percentage": 20.0
+      }
+    ],
+    "company_create_at": "2023-11-10T08:00:00.000Z",
+    "company_update_at": "2026-01-02T10:00:00.000Z",
+    "company_is_active": true
+  }
+]

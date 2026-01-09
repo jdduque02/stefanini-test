@@ -6,5 +6,6 @@ import { JsonTransferRepository } from './repository/transfer.repository';
 @Module({
   controllers: [TransferController],
   providers: [TransferService, JsonTransferRepository],
+  exports: [TransferService],
 })
 export class TransferModule {}

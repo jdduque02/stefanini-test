@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ResponseTransferDto } from '../../transfer/interfaces/response-transfer.dto';
 
 export class ResponseCompanyDto {
   @ApiProperty({
@@ -56,4 +57,11 @@ export class ResponseCompanyDto {
     description: 'Estado activo/inactivo de la empresa',
   })
   company_isactive?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Transferencias realizadas por la empresa en el último mes',
+    type: [ResponseTransferDto],
+    isArray: true,
+  })
+  transfers?: ResponseTransferDto[];
 }

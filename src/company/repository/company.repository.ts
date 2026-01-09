@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,18 +58,18 @@ export class JsonCompanyRepository {
   async create(
     companyDto: CompanyDto | CompanyPymeDto | CompanyCorporateDto,
   ): Promise<Company> {
-    try {
-      const companies = await this.readFile();
+    const companies = await this.readFile();
 
-      const existingCompany = companies.find(
-        ({ company_cuit }) => company_cuit === companyDto.company_cuit,
+    const existingCompany = companies.find(
+      ({ company_cuit }) => company_cuit === companyDto.company_cuit,
+    );
+    if (existingCompany) {
+      throw new ConflictException(
+        `Ya existe una empresa con el CUIT ${companyDto.company_cuit}`,
       );
-      if (existingCompany) {
-        throw new Error(
-          `Ya existe una empresa con el CUIT ${companyDto.company_cuit}`,
-        );
-      }
+    }
 
+    try {
       let newCompany: Company | CompanyPyme | CompanyCorporate;
 
       // Identificar el tipo de empresa y crear la instancia correspondiente
@@ -101,7 +106,7 @@ export class JsonCompanyRepository {
       return newCompany;
     } catch (error) {
       Logger.error('Error al crear la empresa:', error.message);
-      throw new Error('Error al crear la empresa');
+      throw new InternalServerErrorException('Error al crear la empresa');
     }
   }
 }
